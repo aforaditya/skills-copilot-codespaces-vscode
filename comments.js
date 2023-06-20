@@ -1,73 +1,37 @@
 // Create a web server
-// 1. Handle GET requests for /comments
-// 2. Handle POST requests for /comments
-// 3. Handle DELETE requests for /comments/:id
+// 1. Create a web server
+// 2. Create a route for the home page
+// 3. Have the home page return a welcome message
+// 4. Create a route for an about page
+// 5. Have the about page return a welcome message
+// 6. Test your work by visiting both in the browser
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var _ = require('underscore');
+// 7. Create 2 more routes
+//  - /weather
+//  - /about
+// 8. Send back some JSON data with each
+//  - {title: "Weather App", author: "Andrew Mead"}
+//  - {name: "Andrew Mead", age: 26}
 
-var app = express();
-var PORT = 3000;
-var comments = [];
-var commentNextId = 1;
+const express = require('express');
 
-app.use(bodyParser.json());
+const app = express();
 
-app.get('/comments', function(req, res) {
-    res.json(comments);
+app.get('', (req, res) => {
+    res.send('Welcome to my home page!')
 });
 
-app.get('/comments/:id', function(req, res) {
-    var commentId = parseInt(req.params.id, 10);
-    var matchedComment = _.findWhere(comments, {id: commentId});
-
-    if (matchedComment) {
-        res.json(matchedComment);
-    } else {
-        res.status(404).send();
-    }
+app.get('/about', (req, res) => {
+    res.send('Welcome to my about page!')
 });
 
-// POST /comments
-app.post('/comments', function(req, res) {
-    var body = _.pick(req.body, 'name', 'comment');
-
-    if (!_.isString(body.name) || !_.isString(body.comment) || body.name.trim().length === 0 || body.comment.trim().length === 0) {
-        return res.status(400).send();
-    }
-
-    body.name = body.name.trim();
-    body.comment = body.comment.trim();
-    body.id = commentNextId++;
-
-    comments.push(body);
-
-    res.json(body);
+app.get('/weather', (req, res) => {
+    res.send({
+        location: 'Philadelphia',
+        forecast: 'It is snowing'
+    })
 });
 
-// DELETE /comments/:id
-app.delete('/comments/:id', function(req, res) {
-    var commentId = parseInt(req.params.id, 10);
-    var matchedComment = _.findWhere(comments, {id: commentId});
-
-    if (!matchedComment) {
-        res.status(404).json({"error": "no comment found with that id"});
-    } else {
-        comments = _.without(comments, matchedComment);
-        res.json(matchedComment);
-    }
+app.listen(3000, () => {
+    console.log('Server is up on port 3000.')
 });
-
-// PUT /comments/:id
-app.put('/comments/:id', function(req, res) {
-    var commentId = parseInt(req.params.id, 10);
-    var matchedComment = _.findWhere(comments, {id: commentId});
-    var body = _.pick(req.body, 'name', 'comment');
-    var validAttributes = {};
-
-    if (!matchedComment) {
-        return res.status(404).send();
-    }
-
-    if (body.hasOwnProperty('name') && _.isString(body.name) && body.name.trim().
