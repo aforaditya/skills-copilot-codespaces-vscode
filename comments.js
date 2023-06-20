@@ -26,6 +26,7 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/weather', (req, res) => {
+    console.log();
     res.send({
         location: 'Philadelphia',
         forecast: 'It is snowing'
